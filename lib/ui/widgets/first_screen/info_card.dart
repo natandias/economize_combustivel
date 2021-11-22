@@ -4,15 +4,15 @@ import 'package:flutter/material.dart';
 
 class InfoCard extends StatelessWidget {
   final String title;
-  final String content;
   final IconData icon;
+  final String price;
   final bool isPrimaryColor;
 
   const InfoCard(
       {Key? key,
       required this.title,
-      required this.content,
       required this.icon,
+      required this.price,
       required this.isPrimaryColor})
       : super(key: key);
 
@@ -30,24 +30,38 @@ class InfoCard extends StatelessWidget {
           borderRadius: BorderRadius.all(Radius.circular(8))),
       child: Padding(
         padding: const EdgeInsets.all(12.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            Text(
-              tr(title),
-              style: textTheme.headline6!.apply(fontFamily: 'Poppins'),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                    color: Theme.of(context).primaryColor,
+                    width: 100,
+                    height: 90,
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        title,
+                        style:
+                            textTheme.headline6!.apply(fontFamily: 'Poppins'),
+                        textAlign: TextAlign.center,
+                      ),
+                    )),
+              ],
             ),
-            const SizedBox(height: 10),
-            Text(
-              tr(content),
-              style: textTheme.subtitle2,
-            ),
-            const Spacer(),
-            Icon(
-              icon,
-              size: 32,
-              color: textTheme.subtitle2!.color,
+            const SizedBox(width: 100),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "R\$ $price",
+                  style: textTheme.headline6!.apply(fontFamily: 'Poppins'),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
           ],
         ),

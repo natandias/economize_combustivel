@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
         builder: (context, state) {
           return MaterialApp(
             /// Localization is not available for the title.
-            title: 'Flutter Production Boilerplate',
+            title: 'Economize combustível',
             theme: state.themeData,
             home: const SkeletonScreen(),
             debugShowCheckedModeBanner: false,

@@ -14,7 +14,7 @@ class Header extends StatelessWidget {
         tr(text),
         textAlign: TextAlign.start,
         style:
-            Theme.of(context).textTheme.headline4!.apply(fontFamily: 'Poppins'),
+            Theme.of(context).textTheme.headline6!.apply(fontFamily: 'Poppins'),
       ),
     );
   }
