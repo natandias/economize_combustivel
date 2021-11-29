@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:economize_combustivel/ui/widgets/header.dart';
+import 'package:economize_combustivel/ui/widgets/select.dart';
 import 'package:ionicons/ionicons.dart';
 
 class ThirdScreen extends StatelessWidget {

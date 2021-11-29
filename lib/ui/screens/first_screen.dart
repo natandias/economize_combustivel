@@ -170,10 +170,8 @@ class _FirstScreen extends State<FirstScreen> {
                                   .apply(fontFamily: 'Poppins'),
                             ),
                             Select(
-                              title: 'Estado',
                               items: states,
                               selected: _state,
-                              emptyText: 'Selecione um estado',
                               onChanged: changeState,
                             ),
                             const SizedBox(height: 8),
@@ -185,10 +183,8 @@ class _FirstScreen extends State<FirstScreen> {
                                   .apply(fontFamily: 'Poppins'),
                             ),
                             Select(
-                              title: 'Cidade',
                               items: _cities,
                               selected: _city,
-                              emptyText: 'Selecione uma cidade',
                               onChanged: changeCity,
                             ),
                             Card(
