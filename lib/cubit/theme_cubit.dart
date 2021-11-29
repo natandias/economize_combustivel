@@ -1,13 +1,13 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_production_boilerplate/config/theme.dart';
+import 'package:economize_combustivel/config/theme.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 part 'theme_state.dart';
 
 class ThemeCubit extends HydratedCubit<ThemeState> {
-  ThemeCubit() : super(ThemeState(AppThemes.lightTheme));
+  ThemeCubit() : super(ThemeState(AppThemes.darkTheme));
 
   void getTheme(ThemeState state) {
     emit(state);

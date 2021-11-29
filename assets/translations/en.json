@@ -1,8 +1,9 @@
 {
-  "app_name": "Flutter Production Boilerplate",
+  "app_name": "Economize combustível",
 
-  "bottom_nav_first": "Home",
-  "bottom_nav_second": "Info",
+  "bottom_nav_first": "Principal",
+  "bottom_nav_second": "Pesquisar",
+  "bottom_nav_third": "Adicionar",
 
   "localization_title": "Localization",
   "localization_content": "Simplified translations with the Easy Translations package.",

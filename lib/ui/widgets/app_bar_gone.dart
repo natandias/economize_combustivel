@@ -10,13 +10,11 @@ class AppBarGone extends StatelessWidget implements PreferredSizeWidget {
 
     /// This is a reliable way to change the statusbar icons and color
     return AppBar(
-      backwardsCompatibility: false,
       systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
           statusBarIconBrightness: brightness == Brightness.dark
               ? Brightness.light
               : Brightness.dark),
-      brightness: brightness,
       backgroundColor: Colors.transparent,
       elevation: 0,
       bottomOpacity: 0,

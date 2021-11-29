@@ -1,4 +1,4 @@
-package dev.feichtinger.flutterproductionboilerplate.flutter_production_boilerplate
+package com.app.economize_combustivel
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -5,7 +5,7 @@ class AppThemes {
   ///
   /// https://tailwindcss.com/docs/customizing-colors
 
-  static const int _primaryColor = 0xFF6366F1;
+  static const int _primaryColor = 0xFFFF4C29;
   static const MaterialColor primarySwatch =
       MaterialColor(_primaryColor, <int, Color>{
     50: Color(0xFFECEDFD),
@@ -88,11 +88,12 @@ class AppThemes {
   );
 
   static final darkTheme = lightTheme.copyWith(
+    splashColor: const Color(0xFF082032),
     brightness: Brightness.dark,
-    scaffoldBackgroundColor: const Color(0xFF24242a),
-    backgroundColor: const Color(0xFF24242a),
-    cardColor: const Color(0xFF2f2f34),
-    bottomAppBarColor: const Color(0xFF35353a),
+    scaffoldBackgroundColor: const Color(0xFF2c394b),
+    backgroundColor: const Color(0xFF2c394b),
+    cardColor: const Color(0xFF082032),
+    bottomAppBarColor: const Color(0xFF082032),
     dividerColor: const Color(0x1CFFFFFF),
     textTheme: TextTheme(
       headline1: TextStyle(
