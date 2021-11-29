@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:flutter_production_boilerplate/ui/widgets/header.dart';
-import 'package:flutter_production_boilerplate/ui/widgets/first_screen/info_card.dart';
-import 'package:flutter_production_boilerplate/ui/widgets/select.dart';
+import 'package:economize_combustivel/ui/widgets/header.dart';
+import 'package:economize_combustivel/ui/widgets/first_screen/info_card.dart';
+import 'package:economize_combustivel/ui/widgets/select.dart';
 import 'package:ionicons/ionicons.dart';
 
 class CountryState {

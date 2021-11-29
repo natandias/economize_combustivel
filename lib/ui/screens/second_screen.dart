@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_production_boilerplate/ui/widgets/header.dart';
-import 'package:flutter_production_boilerplate/ui/widgets/second_screen/grid_item.dart';
-import 'package:flutter_production_boilerplate/ui/widgets/second_screen/link_card.dart';
-import 'package:flutter_production_boilerplate/ui/widgets/second_screen/text_divider.dart';
+import 'package:economize_combustivel/ui/widgets/header.dart';
+import 'package:economize_combustivel/ui/widgets/second_screen/grid_item.dart';
+import 'package:economize_combustivel/ui/widgets/second_screen/link_card.dart';
+import 'package:economize_combustivel/ui/widgets/second_screen/text_divider.dart';
 import 'package:ionicons/ionicons.dart';
 
 class SecondScreen extends StatelessWidget {
@@ -21,7 +21,7 @@ class SecondScreen extends StatelessWidget {
                 title: 'github_card_title',
                 icon: Ionicons.logo_github,
                 url:
-                    'https://github.com/anfeichtinger/flutter_production_boilerplate'),
+                    'https://github.com/anfeichtinger/economize_combustivel'),
             const TextDivider(text: 'author_divider_title'),
             const SizedBox(height: 8),
             GridView.count(
