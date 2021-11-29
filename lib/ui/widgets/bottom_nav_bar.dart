@@ -36,8 +36,12 @@ class BottomNavBar extends StatelessWidget {
             label: tr('bottom_nav_first'),
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Ionicons.information_circle_outline),
+            icon: const Icon(Ionicons.search_outline),
             label: tr('bottom_nav_second'),
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Ionicons.add_circle_outline),
+            label: tr('bottom_nav_third'),
           ),
         ],
       ),

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:economize_combustivel/ui/widgets/header.dart';
 import 'package:ionicons/ionicons.dart';
 
-class SecondScreen extends StatelessWidget {
-  const SecondScreen({Key? key}) : super(key: key);
+class ThirdScreen extends StatelessWidget {
+  const ThirdScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +13,7 @@ class SecondScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           physics: const BouncingScrollPhysics(),
           children: const [
-            Header(text: 'Pesquisar'),
+            Header(text: 'Adicionar'),
           ]),
     );
   }

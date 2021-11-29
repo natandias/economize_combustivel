@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:economize_combustivel/cubit/bottom_nav_cubit.dart';
 import 'package:economize_combustivel/ui/screens/first_screen.dart';
 import 'package:economize_combustivel/ui/screens/second_screen.dart';
+import 'package:economize_combustivel/ui/screens/third_screen.dart';
 import 'package:economize_combustivel/ui/widgets/app_bar_gone.dart';
 import 'package:economize_combustivel/ui/widgets/bottom_nav_bar.dart';
 
@@ -13,6 +14,7 @@ class SkeletonScreen extends StatelessWidget {
   final _pageNavigation = const [
     FirstScreen(),
     SecondScreen(),
+    ThirdScreen(),
   ];
 
   @override

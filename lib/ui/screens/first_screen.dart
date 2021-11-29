@@ -66,6 +66,15 @@ Future<List<City>> getCities(String state) async {
   return citiesList;
 }
 
+void getGasPrices(String city, String state) async {
+  // var request = '';
+  // http.Response response = await http.get(Uri.parse(request));
+
+  // List<dynamic> jsonArray = json.decode(response.body) as List<dynamic>;
+  // List<GasPrice> gasPricesList =
+  //     jsonArray.map((json) => GasPrice.fromJson(json)).toList();
+}
+
 class FirstScreen extends StatefulWidget {
   const FirstScreen({Key? key}) : super(key: key);
 
@@ -76,6 +85,10 @@ class FirstScreen extends StatefulWidget {
 class _FirstScreen extends State<FirstScreen> {
   String? _state;
   String? _city;
+
+  String _gasPrice = '';
+  String _ethanolPrice = '';
+  String _dieselPrice = '';
 
   List<String> _cities = [];
 
@@ -95,6 +108,9 @@ class _FirstScreen extends State<FirstScreen> {
             _cities.sort(),
             setState(() {
               _city = citiesList[0];
+              _gasPrice = '7,19';
+              _ethanolPrice = '6,00';
+              _dieselPrice = '5,00';
             })
           });
     }
@@ -104,6 +120,9 @@ class _FirstScreen extends State<FirstScreen> {
     if (text != null) {
       setState(() {
         _city = text;
+        _gasPrice = '6,40';
+        _ethanolPrice = '5,20';
+        _dieselPrice = '4,40';
       });
     }
   }
@@ -200,24 +219,24 @@ class _FirstScreen extends State<FirstScreen> {
                               crossAxisSpacing: 8,
                               mainAxisSpacing: 8,
                               childAspectRatio: 3 / 1,
-                              children: const [
+                              children: [
                                 /// Example: it is good practice to put widgets in separate files.
                                 /// This way the screen files won't become too large and
                                 /// the code becomes more clear.
                                 InfoCard(
                                     title: 'Gasolina',
                                     icon: Ionicons.text_outline,
-                                    price: '7,18',
+                                    price: _gasPrice,
                                     isPrimaryColor: false),
                                 InfoCard(
                                     title: 'Etanol',
                                     icon: Ionicons.text_outline,
-                                    price: '5,00',
+                                    price: _ethanolPrice,
                                     isPrimaryColor: false),
                                 InfoCard(
                                     title: 'Diesel',
                                     icon: Ionicons.text_outline,
-                                    price: '4,69',
+                                    price: _dieselPrice,
                                     isPrimaryColor: false),
                               ],
                             ),

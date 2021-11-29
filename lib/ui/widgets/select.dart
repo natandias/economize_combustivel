@@ -24,7 +24,7 @@ class Select extends StatelessWidget {
             color: Theme.of(context).cardColor,
             borderRadius: const BorderRadius.all(Radius.circular(8))),
         child: Padding(
-            padding: const EdgeInsets.fromLTRB(5, 1, 5, 1),
+                padding: const EdgeInsets.fromLTRB(3, 1, 3, 1),
             child: DropdownButton<String>(
               value: selected,
               icon: const Icon(Ionicons.arrow_down),
@@ -40,7 +40,7 @@ class Select extends StatelessWidget {
                 if (items.isEmpty) {
                   return [
                     Container(
-                      padding: const EdgeInsets.all(15),
+                      padding: const EdgeInsets.all(20),
                       child: Text(
                         emptyText,
                         style: const TextStyle(color: Colors.white),

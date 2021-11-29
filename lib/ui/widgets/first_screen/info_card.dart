@@ -56,7 +56,7 @@ class InfoCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "R\$ $price",
+                  price != '' ? "R\$ $price" : '',
                   style: textTheme.headline6!.apply(fontFamily: 'Poppins'),
                   textAlign: TextAlign.center,
                 ),
