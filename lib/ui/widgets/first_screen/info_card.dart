@@ -1,4 +1,3 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -29,7 +28,7 @@ class InfoCard extends StatelessWidget {
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8))),
       child: Padding(
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(10.0),
         child: Row(
           children: [
             Column(

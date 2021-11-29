@@ -34,6 +34,7 @@ dependencies:
   hive: ^2.0.4
   url_launcher: ^6.0.6
   ionicons: ^0.1.2
+  http: ^0.13.4
 
 dev_dependencies:
   flutter_test:
