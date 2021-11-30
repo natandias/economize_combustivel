@@ -4,17 +4,21 @@ import 'package:ionicons/ionicons.dart';
 
 class FuelInfoCard extends StatelessWidget {
   final String title;
-  final IconData icon;
   final String price;
+  final String address;
+  final String user;
+  final String postDate;
   final bool isPrimaryColor;
 
-  const FuelInfoCard(
-      {Key? key,
-      required this.title,
-      required this.icon,
-      required this.price,
-      required this.isPrimaryColor})
-      : super(key: key);
+  const FuelInfoCard({
+    Key? key,
+    required this.title,
+    required this.price,
+    required this.isPrimaryColor,
+    required this.address,
+    required this.user,
+    required this.postDate,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +86,7 @@ class FuelInfoCard extends StatelessWidget {
                                             const SizedBox(width: 5),
                                             Expanded(
                                               child: Text(
-                                                'Av. Doutor Mário Tourinho, n° 3442',
+                                                address,
                                                 style: textTheme.bodyText1!
                                                     .apply(
                                                         fontFamily: 'Poppins'),
@@ -113,7 +117,7 @@ class FuelInfoCard extends StatelessWidget {
                                           ),
                                           const SizedBox(width: 5),
                                           Text(
-                                            'Mário',
+                                            user,
                                             style: textTheme.bodyText1!
                                                 .apply(fontFamily: 'Poppins'),
                                             textAlign: TextAlign.left,
@@ -134,7 +138,7 @@ class FuelInfoCard extends StatelessWidget {
                                           ),
                                           const SizedBox(width: 5),
                                           Text(
-                                            '22/10/2021',
+                                            postDate,
                                             style: textTheme.bodyText1!
                                                 .apply(fontFamily: 'Poppins'),
                                             textAlign: TextAlign.left,

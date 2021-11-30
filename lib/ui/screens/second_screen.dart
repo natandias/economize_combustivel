@@ -66,9 +66,11 @@ class _SecondScreen extends State<SecondScreen> {
               onChanged: changeFilter,
             ),
             const FuelInfoCard(
-                title: 'Posto Turmalina III',
-                icon: Ionicons.text_outline,
-                price: '7,10',
+                title: 'Posto Turmalina II',
+                price: '7,15',
+                address: 'Rua dos Bobos, 0',
+                user: 'Adriano',
+                postDate: '23/10/2021',
                 isPrimaryColor: false)
           ]),
     );
