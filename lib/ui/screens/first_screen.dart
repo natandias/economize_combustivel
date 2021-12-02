@@ -6,6 +6,11 @@ import 'package:economize_combustivel/ui/widgets/header.dart';
 import 'package:economize_combustivel/ui/widgets/first_screen/info_card.dart';
 import 'package:economize_combustivel/ui/widgets/select.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+CollectionReference gasStations =
+    FirebaseFirestore.instance.collection('gas_stations');
 
 class CountryState {
   int id;
@@ -38,41 +43,10 @@ class City {
 
   factory City.fromJson(Map<String, dynamic> json) {
     return City(
-      id: json['id'] as int,
+      id: int.parse(json['id']) as int,
       nome: json['nome'].toString(),
     );
   }
-}
-
-Future<List<CountryState>> getStates() async {
-  const request = 'https://servicodados.ibge.gov.br/api/v1/localidades/estados';
-  http.Response response = await http.get(Uri.parse(request));
-
-  List<dynamic> jsonArray = json.decode(response.body) as List<dynamic>;
-  List<CountryState> countryStatesList =
-      jsonArray.map((json) => CountryState.fromJson(json)).toList();
-
-  return countryStatesList;
-}
-
-Future<List<City>> getCities(String state) async {
-  var request =
-      'https://servicodados.ibge.gov.br/api/v1/localidades/estados/$state/distritos';
-  http.Response response = await http.get(Uri.parse(request));
-
-  List<dynamic> jsonArray = json.decode(response.body) as List<dynamic>;
-  List<City> citiesList = jsonArray.map((json) => City.fromJson(json)).toList();
-
-  return citiesList;
-}
-
-void getGasPrices(String city, String state) async {
-  // var request = '';
-  // http.Response response = await http.get(Uri.parse(request));
-
-  // List<dynamic> jsonArray = json.decode(response.body) as List<dynamic>;
-  // List<GasPrice> gasPricesList =
-  //     jsonArray.map((json) => GasPrice.fromJson(json)).toList();
 }
 
 class FirstScreen extends StatefulWidget {
@@ -92,6 +66,61 @@ class _FirstScreen extends State<FirstScreen> {
 
   List<String> _cities = [];
 
+  Future<List<CountryState>> getStates() async {
+    const request =
+        'https://servicodados.ibge.gov.br/api/v1/localidades/estados';
+    http.Response response = await http.get(Uri.parse(request));
+
+    List<dynamic> jsonArray = json.decode(response.body) as List<dynamic>;
+    List<CountryState> countryStatesList =
+        jsonArray.map((json) => CountryState.fromJson(json)).toList();
+
+    return countryStatesList;
+  }
+
+  Future<List<City>> getCities(String state) async {
+    var request =
+        'https://servicodados.ibge.gov.br/api/v1/localidades/estados/$state/distritos';
+    http.Response response = await http.get(Uri.parse(request));
+
+    List<dynamic> jsonArray = json.decode(response.body) as List<dynamic>;
+    List<City> citiesList =
+        jsonArray.map((json) => City.fromJson(json)).toList();
+
+    return citiesList;
+  }
+
+  Future<void> getAverageFuelPricesByCity(String city) {
+    double gasolinePrice = 0;
+    double ethanolPrice = 0;
+    double dieselPrice = 0;
+    int gasStationsCount = 0;
+
+    return gasStations
+        .where("city", isEqualTo: city)
+        .get()
+        .then((QuerySnapshot querySnapshot) => {
+              querySnapshot.docs.forEach((gasStation) {
+                Map<String, dynamic> data =
+                    gasStation.data() as Map<String, dynamic>;
+                Map<String, dynamic> fuelData = data["average_price"];
+                gasolinePrice = gasolinePrice + fuelData['gasoline'];
+                ethanolPrice = ethanolPrice + fuelData['ethanol'];
+                dieselPrice = dieselPrice + fuelData['diesel'];
+                gasStationsCount++;
+              }),
+              setState(() {
+                _gasPrice =
+                    (gasolinePrice / gasStationsCount).toStringAsFixed(3);
+                _ethanolPrice =
+                    (ethanolPrice / gasStationsCount).toStringAsFixed(3);
+                _dieselPrice =
+                    (dieselPrice / gasStationsCount).toStringAsFixed(3);
+              }),
+            })
+        .catchError((error) => print("Failed to get average prices: $error"));
+  }
+
   void changeState(String? text) {
     if (text != null) {
       setState(() {
@@ -108,10 +137,8 @@ class _FirstScreen extends State<FirstScreen> {
             _cities.sort(),
             setState(() {
               _city = citiesList[0];
-              _gasPrice = '7,19';
-              _ethanolPrice = '6,00';
-              _dieselPrice = '5,00';
-            })
+            }),
+            getAverageFuelPricesByCity(citiesList[0])
           });
     }
   }
@@ -124,6 +151,8 @@ class _FirstScreen extends State<FirstScreen> {
         _ethanolPrice = '5,20';
         _dieselPrice = '4,40';
       });
+
+      getAverageFuelPricesByCity(text);
     }
   }
 
@@ -170,10 +199,8 @@ class _FirstScreen extends State<FirstScreen> {
                                   .apply(fontFamily: 'Poppins'),
                             ),
                             Select(
-                              title: 'Estado',
                               items: states,
                               selected: _state,
-                              emptyText: 'Selecione um estado',
                               onChanged: changeState,
                             ),
                             const SizedBox(height: 8),
@@ -185,10 +212,8 @@ class _FirstScreen extends State<FirstScreen> {
                                   .apply(fontFamily: 'Poppins'),
                             ),
                             Select(
-                              title: 'Cidade',
                               items: _cities,
                               selected: _city,
-                              emptyText: 'Selecione uma cidade',
                               onChanged: changeCity,
                             ),
                             Card(

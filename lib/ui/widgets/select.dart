@@ -2,18 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 
 class Select extends StatelessWidget {
-  final String title;
   final List<String> items;
   final String? selected;
-  final String emptyText;
   final void Function(String? text) onChanged;
 
   const Select(
       {Key? key,
-      required this.title,
       required this.items,
       this.selected,
-      required this.emptyText,
       required this.onChanged})
       : super(key: key);
 
@@ -39,12 +35,8 @@ class Select extends StatelessWidget {
               selectedItemBuilder: (BuildContext context) {
                 if (items.isEmpty) {
                   return [
-                    Container(
-                      padding: const EdgeInsets.all(20),
-                      child: Text(
-                        emptyText,
-                        style: const TextStyle(color: Colors.white),
-                      ),
+                    const Padding(
+                      padding: EdgeInsets.all(20),
                     )
                   ];
                 }
