@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 
-class FuelInfoCard extends StatelessWidget {
+class GasStationInfoCard extends StatelessWidget {
   final String title;
   final String price;
   final String address;
@@ -10,7 +10,7 @@ class FuelInfoCard extends StatelessWidget {
   final String postDate;
   final bool isPrimaryColor;
 
-  const FuelInfoCard({
+  const GasStationInfoCard({
     Key? key,
     required this.title,
     required this.price,

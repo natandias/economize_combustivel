@@ -1,7 +1,4 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 class PriceClient {
   CollectionReference gasStations =
       FirebaseFirestore.instance.collection('gas_stations');

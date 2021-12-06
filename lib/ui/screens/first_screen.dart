@@ -110,7 +110,6 @@ class _FirstScreen extends State<FirstScreen> {
                     states.sort();
                     return BlocBuilder<LocationCubit, LocationState>(
                         builder: (locationCubitBuilderContext, state) {
-                      print('state.citySelected: ${state.citySelected}');
                       if (state.citySelected != '' &&
                           _gasPrice == null &&
                           _ethanolPrice == null &&
