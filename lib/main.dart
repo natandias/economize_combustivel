@@ -13,7 +13,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
-  /// Initialize packages
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
   if (Platform.isAndroid) {
@@ -45,10 +44,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      // Initialize FlutterFire:
       future: Firebase.initializeApp(),
       builder: (context, snapshot) {
-        // Check for errors
         if (snapshot.hasError) {
           return MultiBlocProvider(
               providers: [
@@ -60,7 +57,6 @@ class MyApp extends StatelessWidget {
                 ),
               ],
               child: MaterialApp(
-                /// Localization is not available for the title.
                 title: 'Carregando...',
                 theme: ThemeData(),
                 home: const SkeletonScreen(),
@@ -79,13 +75,12 @@ class MyApp extends StatelessWidget {
                   create: (themeCubitContext) => ThemeCubit(),
                 ),
                 BlocProvider<LocationCubit>(
-                  create: (themeCubitContext) => LocationCubit(),
+                  create: (locationCubitContext) => LocationCubit(),
                 ),
               ],
               child: BlocBuilder<ThemeCubit, ThemeState>(
                   builder: (context, state) {
                 return MaterialApp(
-                  /// Localization is not available for the title.
                   title: 'Economize combustível',
                   theme: state.themeData,
                   home: const SkeletonScreen(),
@@ -96,7 +91,6 @@ class MyApp extends StatelessWidget {
               }));
         }
 
-        // Otherwise, show something whilst waiting for initialization to complete
         return MaterialApp(
             home: Scaffold(
                 appBar: AppBar(

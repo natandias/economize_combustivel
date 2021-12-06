@@ -179,7 +179,6 @@ class _FirstScreen extends State<FirstScreen> {
                                 color: Theme.of(context).splashColor,
                               ),
 
-                              /// Example: Good way to add space between items
                               const SizedBox(height: 8),
                               GridView.count(
                                 physics: const NeverScrollableScrollPhysics(),
@@ -189,9 +188,6 @@ class _FirstScreen extends State<FirstScreen> {
                                 mainAxisSpacing: 8,
                                 childAspectRatio: 3 / 1,
                                 children: [
-                                  /// Example: it is good practice to put widgets in separate files.
-                                  /// This way the screen files won't become too large and
-                                  /// the code becomes more clear.
                                   InfoCard(
                                       title: 'Gasolina',
                                       icon: Ionicons.text_outline,
