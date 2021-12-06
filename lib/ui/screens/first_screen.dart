@@ -61,9 +61,6 @@ class _FirstScreen extends State<FirstScreen> {
   final locationClient = LocationClient();
   final priceClient = PriceClient();
 
-  String? _state;
-  String? _city;
-
   String? _gasPrice;
   String? _ethanolPrice;
   String? _dieselPrice;
