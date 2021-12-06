@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:economize_combustivel/ui/widgets/header.dart';
 import 'package:economize_combustivel/ui/widgets/first_screen/info_card.dart';
 import 'package:economize_combustivel/ui/widgets/select.dart';
+import 'package:economize_combustivel/cubit/location_cubit.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:economize_combustivel/clients/location_client.dart';
+import 'package:economize_combustivel/clients/price_client.dart';
 
 CollectionReference gasStations =
     FirebaseFirestore.instance.collection('gas_stations');
@@ -57,102 +58,25 @@ class FirstScreen extends StatefulWidget {
 }
 
 class _FirstScreen extends State<FirstScreen> {
+  final locationClient = LocationClient();
+  final priceClient = PriceClient();
+
   String? _state;
   String? _city;
 
-  String _gasPrice = '';
-  String _ethanolPrice = '';
-  String _dieselPrice = '';
+  String? _gasPrice;
+  String? _ethanolPrice;
+  String? _dieselPrice;
 
-  List<String> _cities = [];
-
-  Future<List<CountryState>> getStates() async {
-    const request =
-        'https://servicodados.ibge.gov.br/api/v1/localidades/estados';
-    http.Response response = await http.get(Uri.parse(request));
-
-    List<dynamic> jsonArray = json.decode(response.body) as List<dynamic>;
-    List<CountryState> countryStatesList =
-        jsonArray.map((json) => CountryState.fromJson(json)).toList();
-
-    return countryStatesList;
-  }
-
-  Future<List<City>> getCities(String state) async {
-    var request =
-        'https://servicodados.ibge.gov.br/api/v1/localidades/estados/$state/distritos';
-    http.Response response = await http.get(Uri.parse(request));
-
-    List<dynamic> jsonArray = json.decode(response.body) as List<dynamic>;
-    List<City> citiesList =
-        jsonArray.map((json) => City.fromJson(json)).toList();
-
-    return citiesList;
-  }
-
-  Future<void> getAverageFuelPricesByCity(String city) {
-    double gasolinePrice = 0;
-    double ethanolPrice = 0;
-    double dieselPrice = 0;
-    int gasStationsCount = 0;
-
-    return gasStations
-        .where("city", isEqualTo: city)
-        .get()
-        .then((QuerySnapshot querySnapshot) => {
-              querySnapshot.docs.forEach((gasStation) {
-                Map<String, dynamic> data =
-                    gasStation.data() as Map<String, dynamic>;
-                Map<String, dynamic> fuelData = data["average_price"];
-                gasolinePrice = gasolinePrice + fuelData['gasoline'];
-                ethanolPrice = ethanolPrice + fuelData['ethanol'];
-                dieselPrice = dieselPrice + fuelData['diesel'];
-                gasStationsCount++;
-              }),
-              setState(() {
-                _gasPrice =
-                    (gasolinePrice / gasStationsCount).toStringAsFixed(3);
-                _ethanolPrice =
-                    (ethanolPrice / gasStationsCount).toStringAsFixed(3);
-                _dieselPrice =
-                    (dieselPrice / gasStationsCount).toStringAsFixed(3);
-              }),
-            })
-        .catchError((error) => print("Failed to get average prices: $error"));
-  }
-
-  void changeState(String? text) {
+  void changeCity(String? text) async {
     if (text != null) {
+      Map<String, String> prices =
+          await priceClient.getAverageFuelPricesByCity(text);
       setState(() {
-        _state = text;
+        _gasPrice = prices['gasolinePrice'] ?? '';
+        _ethanolPrice = prices['ethanolPrice'] ?? '';
+        _dieselPrice = prices['dieselPrice'] ?? '';
       });
-
-      List<String> citiesList = [];
-
-      getCities(text).then((cities) => {
-            for (var city in cities) {citiesList.add(city.nome)},
-            setState(() {
-              _cities = citiesList;
-            }),
-            _cities.sort(),
-            setState(() {
-              _city = citiesList[0];
-            }),
-            getAverageFuelPricesByCity(citiesList[0])
-          });
-    }
-  }
-
-  void changeCity(String? text) {
-    if (text != null) {
-      setState(() {
-        _city = text;
-        _gasPrice = '6,40';
-        _ethanolPrice = '5,20';
-        _dieselPrice = '4,40';
-      });
-
-      getAverageFuelPricesByCity(text);
     }
   }
 
@@ -160,7 +84,7 @@ class _FirstScreen extends State<FirstScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: FutureBuilder<List<CountryState>>(
-            future: getStates(),
+            future: locationClient.getStates(),
             builder: (context, snapshot) {
               switch (snapshot.connectionState) {
                 case ConnectionState.none:
@@ -184,90 +108,107 @@ class _FirstScreen extends State<FirstScreen> {
                         .map((countryState) => countryState.sigla)
                         .toList();
                     states.sort();
-                    return Material(
-                      color: Theme.of(context).backgroundColor,
-                      child: ListView(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          physics: const BouncingScrollPhysics(),
-                          children: [
-                            const Header(text: 'app_name'),
-                            Text(
-                              'Estado:',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1!
-                                  .apply(fontFamily: 'Poppins'),
-                            ),
-                            Select(
-                              items: states,
-                              selected: _state,
-                              onChanged: changeState,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Cidade:',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1!
-                                  .apply(fontFamily: 'Poppins'),
-                            ),
-                            Select(
-                              items: _cities,
-                              selected: _city,
-                              onChanged: changeCity,
-                            ),
-                            Card(
-                              child: SizedBox(
-                                width: 300,
-                                height: 30,
-                                child: Align(
-                                  alignment: const Alignment(-0.5, 0),
-                                  child: Text(
-                                    _city != null
-                                        ? 'Média semanal de preços em $_city'
-                                        : 'Escolha seu estado e cidade nos campos acima',
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold),
+                    return BlocBuilder<LocationCubit, LocationState>(
+                        builder: (locationCubitBuilderContext, state) {
+                      if (state.citySelected != '' &&
+                          _gasPrice == null &&
+                          _ethanolPrice == null &&
+                          _dieselPrice == null) {
+                        changeCity(state.citySelected);
+                      }
+                      return Material(
+                        color: Theme.of(context).backgroundColor,
+                        child: ListView(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            physics: const BouncingScrollPhysics(),
+                            children: [
+                              const Header(text: 'app_name'),
+                              Text(
+                                'Estado',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1!
+                                    .apply(fontFamily: 'Poppins'),
+                              ),
+                              Select(
+                                items: states,
+                                selected: state.stateSelected != ''
+                                    ? state.stateSelected
+                                    : states[0],
+                                onChanged: (value) => {
+                                  BlocProvider.of<LocationCubit>(context)
+                                      .changeState(value),
+                                },
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Cidade:',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1!
+                                    .apply(fontFamily: 'Poppins'),
+                              ),
+                              Select(
+                                  items: state.cities,
+                                  selected: state.citySelected != ''
+                                      ? state.citySelected
+                                      : state.cities.isNotEmpty
+                                          ? state.cities[0]
+                                          : '',
+                                  onChanged: (value) => {
+                                        BlocProvider.of<LocationCubit>(context)
+                                            .changeCity(value),
+                                        changeCity(value),
+                                      }),
+                              Card(
+                                child: SizedBox(
+                                  width: 300,
+                                  height: 30,
+                                  child: Align(
+                                    alignment: const Alignment(-0.5, 0),
+                                    child: Text(
+                                      state.citySelected != ''
+                                          ? 'Média semanal de preços em ${state.citySelected}'
+                                          : 'Escolha seu estado e cidade nos campos acima',
+                                      style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   ),
                                 ),
+                                color: Theme.of(context).splashColor,
                               ),
-                              color: Theme.of(context).splashColor,
-                            ),
 
-                            /// Example: Good way to add space between items
-                            const SizedBox(height: 8),
-                            GridView.count(
-                              physics: const NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              crossAxisCount: 1,
-                              crossAxisSpacing: 8,
-                              mainAxisSpacing: 8,
-                              childAspectRatio: 3 / 1,
-                              children: [
-                                /// Example: it is good practice to put widgets in separate files.
-                                /// This way the screen files won't become too large and
-                                /// the code becomes more clear.
-                                InfoCard(
-                                    title: 'Gasolina',
-                                    icon: Ionicons.text_outline,
-                                    price: _gasPrice,
-                                    isPrimaryColor: false),
-                                InfoCard(
-                                    title: 'Etanol',
-                                    icon: Ionicons.text_outline,
-                                    price: _ethanolPrice,
-                                    isPrimaryColor: false),
-                                InfoCard(
-                                    title: 'Diesel',
-                                    icon: Ionicons.text_outline,
-                                    price: _dieselPrice,
-                                    isPrimaryColor: false),
-                              ],
-                            ),
-                            const SizedBox(height: 36),
-                          ]),
-                    );
+                              const SizedBox(height: 8),
+                              GridView.count(
+                                physics: const NeverScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                crossAxisCount: 1,
+                                crossAxisSpacing: 8,
+                                mainAxisSpacing: 8,
+                                childAspectRatio: 3 / 1,
+                                children: [
+                                  InfoCard(
+                                      title: 'Gasolina',
+                                      icon: Ionicons.text_outline,
+                                      price: _gasPrice ?? '',
+                                      isPrimaryColor: false),
+                                  InfoCard(
+                                      title: 'Etanol',
+                                      icon: Ionicons.text_outline,
+                                      price: _ethanolPrice ?? '',
+                                      isPrimaryColor: false),
+                                  InfoCard(
+                                      title: 'Diesel',
+                                      icon: Ionicons.text_outline,
+                                      price: _dieselPrice ?? '',
+                                      isPrimaryColor: false),
+                                ],
+                              ),
+                              const SizedBox(height: 36),
+                            ]),
+                      );
+                    });
                   }
               }
             }));
