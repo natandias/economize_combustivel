@@ -4,11 +4,13 @@ class GasStationsClient {
   CollectionReference gasStations =
       FirebaseFirestore.instance.collection('gas_stations');
 
-  Future<List<Map<String, dynamic>>> getGasStations(String city) async {
+  Future<List<Map<String, dynamic>>> getGasStations(
+      String city, String fieldToOrderBy, bool orderDescending) async {
     List<Map<String, dynamic>> gasStationsList = [];
 
     await gasStations
         .where("city", isEqualTo: city)
+        .orderBy("average_price.diesel", descending: orderDescending)
         .get()
         .then((QuerySnapshot querySnapshot) => {
               // ignore: avoid_function_literals_in_foreach_calls

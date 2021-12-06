@@ -42,7 +42,8 @@ class _SecondScreen extends State<SecondScreen> {
         builder: (locationCubitBuilderContext, state) {
       return Scaffold(
           body: FutureBuilder<List<dynamic>>(
-              future: gasStationsClient.getGasStations(state.citySelected),
+              future: gasStationsClient.getGasStations(
+                  state.citySelected, "average_price.diesel", false),
               builder: (context, snapshot) {
                 switch (snapshot.connectionState) {
                   case ConnectionState.none:
