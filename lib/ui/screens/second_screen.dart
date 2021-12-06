@@ -1,7 +1,9 @@
+import 'package:economize_combustivel/cubit/location_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:economize_combustivel/ui/widgets/header.dart';
 import 'package:economize_combustivel/ui/widgets/select.dart';
 import 'package:economize_combustivel/ui/widgets/second_screen/fuel_info_card.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 
 class SecondScreen extends StatefulWidget {
@@ -33,46 +35,51 @@ class _SecondScreen extends State<SecondScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Theme.of(context).backgroundColor,
-      child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          physics: const BouncingScrollPhysics(),
-          children: [
-            const Header(text: 'Pesquisar'),
-            Text(
-              'Tipo de combustível:',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyText1!
-                  .apply(fontFamily: 'Poppins'),
-            ),
-            Select(
-              items: const ['Gasolina', 'Etanol', 'Diesel'],
-              selected: _selectedFuel,
-              onChanged: changeFuel,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Filtar por:',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyText1!
-                  .apply(fontFamily: 'Poppins'),
-            ),
-            Select(
-              items: const ['Menor preço', 'Mais próximo'],
-              selected: _selectedFilter,
-              onChanged: changeFilter,
-            ),
-            const FuelInfoCard(
-                title: 'Posto Turmalina II',
-                price: '7,15',
-                address: 'Rua dos Bobos, 0',
-                user: 'Adriano',
-                postDate: '23/10/2021',
-                isPrimaryColor: false)
-          ]),
-    );
+    return BlocBuilder<LocationCubit, LocationState>(
+        builder: (locationCubitBuilderContext, state) {
+      return Material(
+        color: Theme.of(context).backgroundColor,
+        child: ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            physics: const BouncingScrollPhysics(),
+            children: [
+              const Header(text: 'Pesquisar'),
+              Text(
+                  'Deixa ver se funciona: ${state.stateSelected} - ${state.citySelected}'),
+              Text(
+                'Tipo de combustível:',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText1!
+                    .apply(fontFamily: 'Poppins'),
+              ),
+              Select(
+                items: const ['Gasolina', 'Etanol', 'Diesel'],
+                selected: _selectedFuel,
+                onChanged: changeFuel,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Filtar por:',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText1!
+                    .apply(fontFamily: 'Poppins'),
+              ),
+              Select(
+                items: const ['Menor preço', 'Mais próximo'],
+                selected: _selectedFilter,
+                onChanged: changeFilter,
+              ),
+              const FuelInfoCard(
+                  title: 'Posto Turmalina II',
+                  price: '7,15',
+                  address: 'Rua dos Bobos, 0',
+                  user: 'Adriano',
+                  postDate: '23/10/2021',
+                  isPrimaryColor: false)
+            ]),
+      );
+    });
   }
 }
