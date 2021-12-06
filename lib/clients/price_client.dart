@@ -21,7 +21,6 @@ class PriceClient {
                 Map<String, dynamic> data =
                     gasStation.data() as Map<String, dynamic>;
                 Map<String, dynamic> fuelData = data["average_price"];
-                print(fuelData);
                 gasolinePrice = gasolinePrice + fuelData['gasoline'];
                 ethanolPrice = ethanolPrice + fuelData['ethanol'];
                 dieselPrice = dieselPrice + fuelData['diesel'];

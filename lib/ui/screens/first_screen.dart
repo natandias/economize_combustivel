@@ -64,9 +64,9 @@ class _FirstScreen extends State<FirstScreen> {
   String? _state;
   String? _city;
 
-  String _gasPrice = '';
-  String _ethanolPrice = '';
-  String _dieselPrice = '';
+  String? _gasPrice;
+  String? _ethanolPrice;
+  String? _dieselPrice;
 
   void changeCity(String? text) async {
     if (text != null) {
@@ -110,6 +110,13 @@ class _FirstScreen extends State<FirstScreen> {
                     states.sort();
                     return BlocBuilder<LocationCubit, LocationState>(
                         builder: (locationCubitBuilderContext, state) {
+                      print('state.citySelected: ${state.citySelected}');
+                      if (state.citySelected != '' &&
+                          _gasPrice == null &&
+                          _ethanolPrice == null &&
+                          _dieselPrice == null) {
+                        changeCity(state.citySelected);
+                      }
                       return Material(
                         color: Theme.of(context).backgroundColor,
                         child: ListView(
@@ -189,17 +196,17 @@ class _FirstScreen extends State<FirstScreen> {
                                   InfoCard(
                                       title: 'Gasolina',
                                       icon: Ionicons.text_outline,
-                                      price: _gasPrice,
+                                      price: _gasPrice ?? '',
                                       isPrimaryColor: false),
                                   InfoCard(
                                       title: 'Etanol',
                                       icon: Ionicons.text_outline,
-                                      price: _ethanolPrice,
+                                      price: _ethanolPrice ?? '',
                                       isPrimaryColor: false),
                                   InfoCard(
                                       title: 'Diesel',
                                       icon: Ionicons.text_outline,
-                                      price: _dieselPrice,
+                                      price: _dieselPrice ?? '',
                                       isPrimaryColor: false),
                                 ],
                               ),

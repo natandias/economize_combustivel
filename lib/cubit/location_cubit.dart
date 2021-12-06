@@ -26,7 +26,6 @@ class LocationCubit extends HydratedCubit<LocationState> {
             localCities.sort(),
             changeCities(localCities),
             changeCity(localCities[0]),
-            // getAverageFuelPricesByCity(citiesList[0])
           });
     }
 
