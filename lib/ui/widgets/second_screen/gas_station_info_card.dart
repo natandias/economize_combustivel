@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:economize_combustivel/ui/widgets/location_map.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
@@ -9,6 +11,7 @@ class GasStationInfoCard extends StatelessWidget {
   final String user;
   final String postDate;
   final bool isPrimaryColor;
+  final void Function() openMap;
 
   const GasStationInfoCard({
     Key? key,
@@ -18,6 +21,7 @@ class GasStationInfoCard extends StatelessWidget {
     required this.address,
     required this.user,
     required this.postDate,
+    required this.openMap
   }) : super(key: key);
 
   @override
@@ -52,6 +56,27 @@ class GasStationInfoCard extends StatelessWidget {
                             textTheme.bodyText1!.apply(fontFamily: 'Poppins'),
                         textAlign: TextAlign.center,
                       ),
+                    )),
+                SizedBox(
+                    width: 100,
+                    height: 60,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                              textStyle: const TextStyle(fontSize: 20),
+                            ),
+                            onPressed: openMap,
+                            child: Text('Ver no mapa',
+                                style: textTheme.bodyText1!.apply(
+                                  fontFamily: 'Poppins',
+                                  decoration: TextDecoration.underline,
+                                ),
+                                textAlign: TextAlign.center),
+                          ),
+                        ),
+                      ],
                     )),
               ],
             ),

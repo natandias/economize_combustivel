@@ -1,11 +1,14 @@
+// ignore_for_file: unnecessary_null_comparison
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:economize_combustivel/clients/gas_stations_client.dart';
 import 'package:economize_combustivel/cubit/location_cubit.dart';
+import 'package:economize_combustivel/ui/widgets/location_map.dart';
 import 'package:flutter/material.dart';
 import 'package:economize_combustivel/ui/widgets/header.dart';
 import 'package:economize_combustivel/ui/widgets/select.dart';
 import 'package:economize_combustivel/ui/widgets/second_screen/gas_station_info_card.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ionicons/ionicons.dart';
 
 class SecondScreen extends StatefulWidget {
   const SecondScreen({Key? key}) : super(key: key);
@@ -17,8 +20,24 @@ class SecondScreen extends StatefulWidget {
 class _SecondScreen extends State<SecondScreen> {
   String _selectedFuel = 'Gasolina';
   String _selectedFilter = 'Menor preço';
+  double _latitude = 0;
+  double _longitude = 0;
 
   final gasStationsClient = GasStationsClient();
+
+  void openMapWithCoordinates(GeoPoint mapPosition) {
+    setState(() {
+      _latitude = mapPosition.latitude;
+      _longitude = mapPosition.longitude;
+    });
+  }
+
+  void closeMap() {
+    setState(() {
+      _latitude = 0;
+      _longitude = 0;
+    });
+  }
 
   void changeFuel(String? text) {
     if (text != null) {
@@ -63,61 +82,82 @@ class _SecondScreen extends State<SecondScreen> {
                         textAlign: TextAlign.center,
                       ));
                     } else {
-                      return Material(
-                        color: Theme.of(context).backgroundColor,
-                        child: ListView(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            physics: const BouncingScrollPhysics(),
-                            children: [
-                              Header(
-                                  text:
-                                      'Pesquisar em ${state.citySelected} - ${state.stateSelected}'),
-                              Text(
-                                'Tipo de combustível:',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1!
-                                    .apply(fontFamily: 'Poppins'),
-                              ),
-                              Select(
-                                items: const ['Gasolina', 'Etanol', 'Diesel'],
-                                selected: _selectedFuel,
-                                onChanged: changeFuel,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Filtar por:',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1!
-                                    .apply(fontFamily: 'Poppins'),
-                              ),
-                              Select(
-                                items: const ['Menor preço', 'Mais próximo'],
-                                selected: _selectedFilter,
-                                onChanged: changeFilter,
-                              ),
-                              Column(
-                                  children: snapshot.data!
-                                      .map<Widget>((gasStation) =>
-                                          GasStationInfoCard(
-                                              title: gasStation['name'],
-                                              price: gasStation['average_price']
-                                                      [_selectedFuel ==
-                                                              'Gasolina'
-                                                          ? 'gasoline'
-                                                          : _selectedFuel ==
-                                                                  'Etanol'
-                                                              ? 'ethanol'
-                                                              : 'diesel']
-                                                  .toString(),
-                                              address: gasStation['address'],
-                                              user: 'Adriano',
-                                              postDate: '23/10/2021',
-                                              isPrimaryColor: false))
-                                      .toList())
-                            ]),
-                      );
+                      return _latitude != 0 && _longitude != 0
+                          ? LocationMap(
+                              latitude: _latitude,
+                              longitude: _longitude,
+                              goBack: closeMap)
+                          : Material(
+                              color: Theme.of(context).backgroundColor,
+                              child: ListView(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16),
+                                  physics: const BouncingScrollPhysics(),
+                                  children: [
+                                    Header(
+                                        text:
+                                            'Pesquisar em ${state.citySelected} - ${state.stateSelected}'),
+                                    Text(
+                                      'Tipo de combustível:',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .apply(fontFamily: 'Poppins'),
+                                    ),
+                                    Select(
+                                      items: const [
+                                        'Gasolina',
+                                        'Etanol',
+                                        'Diesel'
+                                      ],
+                                      selected: _selectedFuel,
+                                      onChanged: changeFuel,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'Filtar por:',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .apply(fontFamily: 'Poppins'),
+                                    ),
+                                    Select(
+                                      items: const [
+                                        'Menor preço',
+                                        'Mais próximo'
+                                      ],
+                                      selected: _selectedFilter,
+                                      onChanged: changeFilter,
+                                    ),
+                                    Column(
+                                        children: snapshot.data!
+                                            .map<Widget>((gasStation) =>
+                                                GasStationInfoCard(
+                                                    title: gasStation['name'],
+                                                    price: gasStation[
+                                                                'average_price']
+                                                            [_selectedFuel ==
+                                                                    'Gasolina'
+                                                                ? 'gasoline'
+                                                                : _selectedFuel ==
+                                                                        'Etanol'
+                                                                    ? 'ethanol'
+                                                                    : 'diesel']
+                                                        .toString(),
+                                                    address:
+                                                        gasStation['address']
+                                                            as String,
+                                                    user: 'Adriano',
+                                                    postDate: '23/10/2021',
+                                                    isPrimaryColor: false,
+                                                    openMap: () =>
+                                                        openMapWithCoordinates(
+                                                            gasStation[
+                                                                    'map_position']
+                                                                as GeoPoint)))
+                                            .toList())
+                                  ]),
+                            );
                     }
                 }
               }));
