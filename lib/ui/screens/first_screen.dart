@@ -65,10 +65,12 @@ class _FirstScreen extends State<FirstScreen> {
   String? _ethanolPrice;
   String? _dieselPrice;
 
-  void changeCity(String? text) async {
+  void changeCity(String? text, String state) async {
     if (text != null) {
       Map<String, String> prices =
-          await priceClient.getAverageFuelPricesByCity(text);
+          await priceClient.getAverageFuelPricesByCity(text, state);
+
+      print('prices: $prices');
       setState(() {
         _gasPrice = prices['gasolinePrice'] ?? '';
         _ethanolPrice = prices['ethanolPrice'] ?? '';
@@ -111,7 +113,7 @@ class _FirstScreen extends State<FirstScreen> {
                           _gasPrice == null &&
                           _ethanolPrice == null &&
                           _dieselPrice == null) {
-                        changeCity(state.citySelected);
+                        changeCity(state.citySelected, state.stateSelected);
                       }
                       return Material(
                         color: Theme.of(context).backgroundColor,
@@ -155,7 +157,7 @@ class _FirstScreen extends State<FirstScreen> {
                                   onChanged: (value) => {
                                         BlocProvider.of<LocationCubit>(context)
                                             .changeCity(value),
-                                        changeCity(value),
+                                        changeCity(value, state.stateSelected),
                                       }),
                               Card(
                                 child: SizedBox(

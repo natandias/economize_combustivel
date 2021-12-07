@@ -50,7 +50,7 @@ class _ThirdScreen extends State<ThirdScreen> {
     );
   }
 
-  void registerPrice() async {
+  void registerPrice(String city, String state) async {
     if (_selectedGasStation == null) {
       setState(() {
         errorMsg = 'Selecione um posto de gasolina';
@@ -70,6 +70,8 @@ class _ThirdScreen extends State<ThirdScreen> {
         priceController.text.isNotEmpty) {
       await priceClient.registerPrice(
         _selectedGasStation as String,
+        city,
+        state,
         _selectedFuel == 'Gasolina'
             ? 'gasoline'
             : _selectedFuel == 'Etanol'
@@ -178,7 +180,8 @@ class _ThirdScreen extends State<ThirdScreen> {
                                 style: ElevatedButton.styleFrom(
                                     textStyle: const TextStyle(
                                         fontSize: 18, color: Colors.white)),
-                                onPressed: registerPrice,
+                                onPressed: () => registerPrice(
+                                    state.citySelected, state.stateSelected),
                                 child: const Text(
                                   'Cadastrar',
                                   style: TextStyle(color: Colors.white),

@@ -6,37 +6,57 @@ class PriceClient {
 
   CollectionReference gasStations =
       FirebaseFirestore.instance.collection('gas_stations');
-  
+
   CollectionReference prices = FirebaseFirestore.instance.collection('prices');
 
-  Future<Map<String, String>> getAverageFuelPricesByCity(String city) async {
+  Future<Map<String, String>> getAverageFuelPricesByCity(
+      String city, String state) async {
     double gasolinePrice = 0;
     double ethanolPrice = 0;
     double dieselPrice = 0;
-    int gasStationsCount = 0;
 
-    await gasStations
+    int gasStationsGasolineCount = 0;
+    int gasStationsEthanolCount = 0;
+    int gasStationsDieselCount = 0;
+
+    await prices
         .where("city", isEqualTo: city)
+        .where("state", isEqualTo: state)
         .get()
         .then((QuerySnapshot querySnapshot) => {
               // ignore: avoid_function_literals_in_foreach_calls
               querySnapshot.docs.forEach((gasStation) {
                 Map<String, dynamic> data =
                     gasStation.data() as Map<String, dynamic>;
-                Map<String, dynamic> fuelData = data["average_price"];
-                gasolinePrice = gasolinePrice + fuelData['gasoline'];
-                ethanolPrice = ethanolPrice + fuelData['ethanol'];
-                dieselPrice = dieselPrice + fuelData['diesel'];
-                gasStationsCount++;
-              }),
-              if (gasStationsCount > 0)
-                {
-                  gasolinePrice = gasolinePrice / gasStationsCount,
-                  ethanolPrice = ethanolPrice / gasStationsCount,
-                  dieselPrice = dieselPrice / gasStationsCount,
+                double fuelPrice = data["price"];
+                String fuelType = data["fuel_type"];
+
+                if (fuelType == 'gasoline') {
+                  gasolinePrice = gasolinePrice + fuelPrice;
+                  gasStationsGasolineCount++;
                 }
-            })
-        .catchError((error) => print("Failed to get average prices: $error"));
+
+                if (fuelType == 'ethanol') {
+                  ethanolPrice = ethanolPrice + fuelPrice;
+                  gasStationsEthanolCount++;
+                }
+
+                if (fuelType == 'diesel') {
+                  dieselPrice = dieselPrice + fuelPrice;
+                  gasStationsDieselCount++;
+                }
+              }),
+
+              if (gasStationsGasolineCount > 0)
+                {gasolinePrice = gasolinePrice / gasStationsGasolineCount},
+
+              if (gasStationsEthanolCount > 0)
+                {ethanolPrice = ethanolPrice / gasStationsEthanolCount},
+
+              if (gasStationsDieselCount > 0)
+                {dieselPrice = dieselPrice / gasStationsDieselCount},
+            });
+    // .catchError((error) => print("Failed to get average prices: $error"));
 
     return Future(() => {
           "gasolinePrice": gasolinePrice.toStringAsFixed(3),
@@ -47,6 +67,8 @@ class PriceClient {
 
   Future<void> registerPrice(
     String gasStation,
+    String city,
+    String state,
     String fuelType,
     double price,
   ) async {
@@ -55,6 +77,8 @@ class PriceClient {
       'fuel_type': fuelType,
       'price': price,
       'date': DateTime.now(),
+      'city': city,
+      'state': state,
     }).catchError((error) => print("Failed to register price: $error"));
   }
 }
