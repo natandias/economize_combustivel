@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 
-class TextFieldGeneral extends StatefulWidget {
+class LoginForm extends StatefulWidget {
   @override
-  _TextFieldGeneralState createState() => _TextFieldGeneralState();
+  _LoginFormState createState() => _LoginFormState();
 }
 
-class _TextFieldGeneralState extends State<TextFieldGeneral> {
+class _LoginFormState extends State<LoginForm> {
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -15,7 +15,9 @@ class _TextFieldGeneralState extends State<TextFieldGeneral> {
   bool isConfirmPasswordVisible = false;
   bool isPasswordVisible = false;
   bool isCreateAccount = false;
-  bool isLoginError = false;
+  bool isPasswordError = false;
+  bool isConfirmPasswordError = false;
+  bool isEmailError = false;
   @override
   void initState() {
     super.initState();
@@ -28,10 +30,8 @@ class _TextFieldGeneralState extends State<TextFieldGeneral> {
     emailController.clear();
     passwordController.clear();
     confirmPasswordController.clear();
-    setState(() {
-      isConfirmPasswordVisible = false;
-      isPasswordVisible = false;
-    });
+    setState(() => isConfirmPasswordVisible = false);
+    setState(() => isPasswordVisible = false);
   }
 
   @override
@@ -43,10 +43,15 @@ class _TextFieldGeneralState extends State<TextFieldGeneral> {
               isCreateAccount
                   ? const SizedBox(height: 0)
                   : const SizedBox(height: 28),
-              buildEmail(),
+              SizedBox(
+                height: isEmailError ? 70 : 50,
+                child: SizedBox(
+                  child: buildEmail(),
+                ),
+              ),
               const SizedBox(height: 10),
               SizedBox(
-                height: isLoginError ? 70 : 50,
+                height: isPasswordError ? 70 : 50,
                 child: SizedBox(
                   child: buildPassword(),
                 ),
@@ -93,6 +98,13 @@ class _TextFieldGeneralState extends State<TextFieldGeneral> {
         height: 50,
         child: TextFormField(
           controller: emailController,
+          validator: (value) {
+            setState(() => isEmailError = false);
+            if (value!.isEmpty) {
+              setState(() => isEmailError = true);
+              return 'Campo obrigatório';
+            }
+          },
           decoration: InputDecoration(
             hintText: 'name@example.com',
             labelText: 'Email',
@@ -112,9 +124,9 @@ class _TextFieldGeneralState extends State<TextFieldGeneral> {
         child: TextFormField(
           controller: passwordController,
           validator: (value) {
-            setState(() => isLoginError = false);
+            setState(() => isPasswordError = false);
             if (value!.isEmpty) {
-              setState(() => isLoginError = true);
+              setState(() => isPasswordError = true);
               return 'Campo obrigatório';
             }
           },
