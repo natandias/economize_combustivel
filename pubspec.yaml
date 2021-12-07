@@ -41,6 +41,8 @@ dependencies:
   cloud_firestore: ^3.1.0
   flutter_map: ^0.14.0
   latlng: ^0.1.0
+  uuid: ^3.0.5
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:
