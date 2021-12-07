@@ -55,13 +55,46 @@ class PriceClient {
 
               if (gasStationsDieselCount > 0)
                 {dieselPrice = dieselPrice / gasStationsDieselCount},
-            });
-    // .catchError((error) => print("Failed to get average prices: $error"));
+            })
+        .catchError((error) => print("Failed to get average prices: $error"));
 
     return Future(() => {
           "gasolinePrice": gasolinePrice.toStringAsFixed(3),
           "ethanolPrice": ethanolPrice.toStringAsFixed(3),
           "dieselPrice": dieselPrice.toStringAsFixed(3),
+        });
+  }
+
+  Future<Map<String, String>> getLastPrices(
+      String gasStation, String fuelType, String city, String state) async {
+    double price = 0;
+    String user = '';
+    Timestamp? date;
+
+    await prices
+        .where("gas_station", isEqualTo: gasStation)
+        .where("city", isEqualTo: city)
+        .where("state", isEqualTo: state)
+        .where("fuel_type", isEqualTo: fuelType)
+        .orderBy("date", descending: true)
+        .limit(1)
+        .get()
+        .then((QuerySnapshot querySnapshot) => {
+              // ignore: avoid_function_literals_in_foreach_calls
+              querySnapshot.docs.forEach((gasStation) {
+                Map<String, dynamic> data =
+                    gasStation.data() as Map<String, dynamic>;
+                price = data["price"];
+                // user = data["user"];
+                date = data["date"] as Timestamp;
+              }),
+            })
+        .catchError((error) => print("Failed to get last prices: $error"));
+
+    return Future(() => {
+          "price": price.toStringAsFixed(3),
+          "user": user,
+          "date": date!.toDate().toString(),
         });
   }
 

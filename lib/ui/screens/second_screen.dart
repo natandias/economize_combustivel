@@ -124,6 +124,8 @@ class _SecondScreen extends State<SecondScreen> {
                                                     address:
                                                         gasStation['address']
                                                             as String,
+                                                    currentFuelType:
+                                                        _selectedFuel,
                                                     user: 'Adriano',
                                                     postDate: '23/10/2021',
                                                     isPrimaryColor: false,
