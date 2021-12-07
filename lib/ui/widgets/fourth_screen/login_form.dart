@@ -1,7 +1,15 @@
+import 'package:economize_combustivel/clients/user.dart';
+import 'package:economize_combustivel/cubit/bottom_nav_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginForm extends StatefulWidget {
+  const LoginForm({
+    Key? key,
+  }) : super(key: key);
+
   @override
   _LoginFormState createState() => _LoginFormState();
 }
@@ -9,24 +17,33 @@ class LoginForm extends StatefulWidget {
 class _LoginFormState extends State<LoginForm> {
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
   final emailController = TextEditingController();
+  final nameController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+
+  bool done = false;
+
+  final userClient = UserClient();
 
   bool isConfirmPasswordVisible = false;
   bool isPasswordVisible = false;
   bool isCreateAccount = false;
+  bool isNameError = false;
   bool isPasswordError = false;
   bool isConfirmPasswordError = false;
   bool isEmailError = false;
+
   @override
   void initState() {
     super.initState();
+    nameController.addListener(() => setState(() {}));
     emailController.addListener(() => setState(() {}));
     passwordController.addListener(() => setState(() {}));
     confirmPasswordController.addListener(() => setState(() {}));
   }
 
   void clearText() {
+    nameController.clear();
     emailController.clear();
     passwordController.clear();
     confirmPasswordController.clear();
@@ -34,63 +51,138 @@ class _LoginFormState extends State<LoginForm> {
     setState(() => isPasswordVisible = false);
   }
 
+  void createAccount() async {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: emailController.text, password: passwordController.text);
+
+      userClient.createUser(userCredential.user!.uid, nameController.text);
+
+      setState(() {
+        done = true;
+      });
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void login() async {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+              email: emailController.text, password: passwordController.text);
+
+      setState(() {
+        done = true;
+      });
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        print('No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        print('Wrong password provided for that user.');
+      }
+    }
+  }
+
   @override
-  Widget build(BuildContext context) => Form(
-        key: _form,
-        child: Center(
-          child: ListView(
-            children: [
-              isCreateAccount
-                  ? const SizedBox(height: 0)
-                  : const SizedBox(height: 28),
-              SizedBox(
-                height: isEmailError ? 70 : 50,
-                child: SizedBox(
-                  child: buildEmail(),
-                ),
+  Widget build(BuildContext context) {
+    if (done) {
+      BlocProvider.of<BottomNavCubit>(context).updateIndex(0);
+    }
+    return Form(
+      key: _form,
+      child: Center(
+        child: ListView(
+          children: [
+            isCreateAccount
+                ? const SizedBox(height: 0)
+                : const SizedBox(height: 28),
+            SizedBox(
+              height: isCreateAccount ? 50 : 0,
+              child: SizedBox(
+                child: isCreateAccount ? buildName() : const SizedBox.shrink(),
               ),
-              const SizedBox(height: 10),
-              SizedBox(
-                height: isPasswordError ? 70 : 50,
-                child: SizedBox(
-                  child: buildPassword(),
-                ),
+            ),
+            SizedBox(height: isCreateAccount ? 10 : 0),
+            SizedBox(
+              height: isEmailError ? 70 : 50,
+              child: SizedBox(
+                child: buildEmail(),
               ),
-              const SizedBox(height: 10),
-              SizedBox(
-                height: isCreateAccount ? 70 : 0,
-                child: SizedBox(
+            ),
+            const SizedBox(height: 10),
+            SizedBox(
+              height: isPasswordError ? 70 : 50,
+              child: SizedBox(
+                child: buildPassword(),
+              ),
+            ),
+            const SizedBox(height: 10),
+            SizedBox(
+              height: isCreateAccount ? 70 : 0,
+              child: SizedBox(
+                child: isCreateAccount
+                    ? buildPasswordConfirmation()
+                    : (const SizedBox(height: 0)),
+              ),
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                primary: Colors.white,
+                backgroundColor: Colors.deepOrange,
+              ),
+              child:
+                  isCreateAccount ? Text('Criar conta') : Text('Fazer login'),
+              onPressed: () {
+                _form.currentState!.validate();
+                isCreateAccount ? createAccount() : login();
+              },
+            ),
+            const SizedBox(height: 6),
+            Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+              InkWell(
                   child: isCreateAccount
-                      ? buildPasswordConfirmation()
-                      : (const SizedBox(height: 0)),
-                ),
-              ),
-              TextButton(
-                style: TextButton.styleFrom(
-                  primary: Colors.white,
-                  backgroundColor: Colors.deepOrange,
-                ),
-                child:
-                    isCreateAccount ? Text('Criar conta') : Text('Fazer login'),
-                onPressed: () {
-                  _form.currentState!.validate();
-                  print('Email: ${emailController.text}');
-                  print('Password: ${passwordController.text}');
-                },
-              ),
-              const SizedBox(height: 6),
-              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-                InkWell(
-                    child: isCreateAccount
-                        ? const Text('Já possui uma conta?')
-                        : const Text('Criar uma conta'),
-                    onTap: () => {
-                          setState(() => isCreateAccount = !isCreateAccount),
-                          clearText(),
-                        }),
-              ]),
-            ],
+                      ? const Text('Já possui uma conta?')
+                      : const Text('Criar uma conta'),
+                  onTap: () => {
+                        setState(() => isCreateAccount = !isCreateAccount),
+                        clearText(),
+                      }),
+            ]),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildName() => SizedBox(
+        height: 50,
+        child: TextFormField(
+          controller: nameController,
+          validator: (value) {
+            setState(() => isNameError = false);
+            if (value!.isEmpty) {
+              setState(() => isNameError = true);
+              return 'Campo obrigatório';
+            }
+          },
+          decoration: InputDecoration(
+            labelText: 'Nome',
+            labelStyle: const TextStyle(color: Colors.white),
+            contentPadding:
+                const EdgeInsets.only(left: 0, right: 0, bottom: 15, top: 15),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(0)),
+            prefixIcon: const Icon(Ionicons.person, size: 20),
           ),
+          keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.done,
         ),
       );
 

@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
+import 'package:economize_combustivel/clients/user.dart';
+import 'package:economize_combustivel/cubit/auth_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_displaymode/flutter_displaymode.dart';
@@ -11,6 +13,7 @@ import 'package:hive/hive.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -77,9 +80,31 @@ class MyApp extends StatelessWidget {
                 BlocProvider<LocationCubit>(
                   create: (locationCubitContext) => LocationCubit(),
                 ),
+                BlocProvider<AuthCubit>(
+                  create: (authCubitContext) => AuthCubit(),
+                ),
               ],
               child: BlocBuilder<ThemeCubit, ThemeState>(
                   builder: (context, state) {
+                final userClient = UserClient();
+
+                FirebaseAuth auth = FirebaseAuth.instance;
+                auth.authStateChanges().listen((User? user) async {
+                  if (user != null) {
+                    print('User is signed in: ${user.uid}');
+                    Map<String, dynamic> userOnDB =
+                        await userClient.getUser(user.uid);
+
+                    var userName = userOnDB['userName'] as String;
+
+                    BlocProvider.of<AuthCubit>(context).changeIsLogged(true);
+
+                    BlocProvider.of<AuthCubit>(context)
+                        .changeUsername(userName);
+                  } else {
+                    print('User is not signed in');
+                  }
+                });
                 return MaterialApp(
                   title: 'Economize combustível',
                   theme: state.themeData,
