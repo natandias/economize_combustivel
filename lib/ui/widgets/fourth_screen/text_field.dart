@@ -77,7 +77,7 @@ class _TextFieldGeneralState extends State<TextFieldGeneral> {
               Row(mainAxisAlignment: MainAxisAlignment.end, children: [
                 InkWell(
                     child: isCreateAccount
-                        ? const Text('Já tem uma conta?')
+                        ? const Text('Já possui uma conta?')
                         : const Text('Criar uma conta'),
                     onTap: () => {
                           setState(() => isCreateAccount = !isCreateAccount),
