@@ -1,7 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:uuid/uuid.dart';
+
 class PriceClient {
+  var uuid = const Uuid();
+
   CollectionReference gasStations =
       FirebaseFirestore.instance.collection('gas_stations');
+  
+  CollectionReference prices = FirebaseFirestore.instance.collection('prices');
 
   Future<Map<String, String>> getAverageFuelPricesByCity(String city) async {
     double gasolinePrice = 0;
@@ -37,5 +43,18 @@ class PriceClient {
           "ethanolPrice": ethanolPrice.toStringAsFixed(3),
           "dieselPrice": dieselPrice.toStringAsFixed(3),
         });
+  }
+
+  Future<void> registerPrice(
+    String gasStation,
+    String fuelType,
+    double price,
+  ) async {
+    await prices.doc(uuid.v4()).set({
+      'gas_station': gasStation,
+      'fuel_type': fuelType,
+      'price': price,
+      'date': DateTime.now(),
+    }).catchError((error) => print("Failed to register price: $error"));
   }
 }

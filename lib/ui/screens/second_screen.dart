@@ -47,14 +47,6 @@ class _SecondScreen extends State<SecondScreen> {
     }
   }
 
-  void changeFilter(String? text) {
-    if (text != null) {
-      setState(() {
-        _selectedFilter = text;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LocationCubit, LocationState>(
@@ -114,21 +106,6 @@ class _SecondScreen extends State<SecondScreen> {
                                       onChanged: changeFuel,
                                     ),
                                     const SizedBox(height: 8),
-                                    Text(
-                                      'Filtar por:',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyText1!
-                                          .apply(fontFamily: 'Poppins'),
-                                    ),
-                                    Select(
-                                      items: const [
-                                        'Menor preço',
-                                        'Mais próximo'
-                                      ],
-                                      selected: _selectedFilter,
-                                      onChanged: changeFilter,
-                                    ),
                                     Column(
                                         children: snapshot.data!
                                             .map<Widget>((gasStation) =>

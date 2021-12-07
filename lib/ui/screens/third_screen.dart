@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:economize_combustivel/ui/widgets/header.dart';
 import 'package:economize_combustivel/ui/widgets/select.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:economize_combustivel/clients/price_client.dart';
 import 'package:economize_combustivel/clients/gas_stations_client.dart';
 import 'package:economize_combustivel/cubit/location_cubit.dart';
 import 'package:economize_combustivel/cubit/bottom_nav_cubit.dart';
@@ -16,6 +18,8 @@ class ThirdScreen extends StatefulWidget {
 
 class _ThirdScreen extends State<ThirdScreen> {
   final gasStationsClient = GasStationsClient();
+  final priceClient = PriceClient();
+
   String? _selectedGasStation;
   String? _selectedFuel;
   String errorMsg = '';
@@ -46,7 +50,7 @@ class _ThirdScreen extends State<ThirdScreen> {
     );
   }
 
-  void registerPrice() {
+  void registerPrice() async {
     if (_selectedGasStation == null) {
       setState(() {
         errorMsg = 'Selecione um posto de gasolina';
@@ -64,7 +68,17 @@ class _ThirdScreen extends State<ThirdScreen> {
     if (_selectedGasStation != null &&
         _selectedFuel != null &&
         priceController.text.isNotEmpty) {
-      print('price ${priceController.text}');
+      await priceClient.registerPrice(
+        _selectedGasStation as String,
+        _selectedFuel == 'Gasolina'
+            ? 'gasoline'
+            : _selectedFuel == 'Etanol'
+                ? 'ethanol'
+                : 'diesel',
+        double.parse(priceController.text),
+      );
+
+      print('Price registered');
 
       setState(() {
         errorMsg = 'Cadastrado com sucesso!';
@@ -103,6 +117,11 @@ class _ThirdScreen extends State<ThirdScreen> {
                           .map((gasStation) => gasStation['name'] as String)
                           .toList();
                       gasStations.sort();
+
+                      if (errorMsg == 'Cadastrado com sucesso!') {
+                        BlocProvider.of<BottomNavCubit>(context).updateIndex(0);
+                      }
+
                       return Material(
                         color: Theme.of(context).backgroundColor,
                         child: ListView(
@@ -159,11 +178,7 @@ class _ThirdScreen extends State<ThirdScreen> {
                                 style: ElevatedButton.styleFrom(
                                     textStyle: const TextStyle(
                                         fontSize: 18, color: Colors.white)),
-                                onPressed: () => {
-                                  registerPrice,
-                                  BlocProvider.of<BottomNavCubit>(context)
-                                      .updateIndex(0),
-                                },
+                                onPressed: registerPrice,
                                 child: const Text(
                                   'Cadastrar',
                                   style: TextStyle(color: Colors.white),
