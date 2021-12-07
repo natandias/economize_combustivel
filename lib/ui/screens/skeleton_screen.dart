@@ -5,6 +5,7 @@ import 'package:economize_combustivel/cubit/bottom_nav_cubit.dart';
 import 'package:economize_combustivel/ui/screens/first_screen.dart';
 import 'package:economize_combustivel/ui/screens/second_screen.dart';
 import 'package:economize_combustivel/ui/screens/third_screen.dart';
+import 'package:economize_combustivel/ui/screens/fourth_screen.dart';
 import 'package:economize_combustivel/ui/widgets/app_bar_gone.dart';
 import 'package:economize_combustivel/ui/widgets/bottom_nav_bar.dart';
 
@@ -15,6 +16,7 @@ class SkeletonScreen extends StatelessWidget {
     FirstScreen(),
     SecondScreen(),
     ThirdScreen(),
+    FourthScreen()
   ];
 
   @override

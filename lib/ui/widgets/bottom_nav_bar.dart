@@ -43,6 +43,10 @@ class BottomNavBar extends StatelessWidget {
             icon: const Icon(Ionicons.add_circle_outline),
             label: tr('bottom_nav_third'),
           ),
+          BottomNavigationBarItem(
+            icon: const Icon(Ionicons.people_outline),
+            label: tr('bottom_nav_fourth'),
+          ),
         ],
       ),
     );
