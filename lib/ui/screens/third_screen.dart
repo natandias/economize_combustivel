@@ -51,7 +51,7 @@ class _ThirdScreen extends State<ThirdScreen> {
     );
   }
 
-  void registerPrice(String city, String state) async {
+  void registerPrice(String city, String state, String username) async {
     if (_selectedGasStation == null) {
       setState(() {
         errorMsg = 'Selecione um posto de gasolina';
@@ -79,6 +79,7 @@ class _ThirdScreen extends State<ThirdScreen> {
                 ? 'ethanol'
                 : 'diesel',
         double.parse(priceController.text),
+        username,
       );
 
       print('Price registered');
@@ -195,7 +196,8 @@ class _ThirdScreen extends State<ThirdScreen> {
                                             fontSize: 18, color: Colors.white)),
                                     onPressed: () => registerPrice(
                                         state.citySelected,
-                                        state.stateSelected),
+                                        state.stateSelected,
+                                        authState.userName),
                                     child: const Text(
                                       'Cadastrar',
                                       style: TextStyle(color: Colors.white),

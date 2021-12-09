@@ -12,8 +12,6 @@ class GasStationInfoCard extends StatefulWidget {
   final String title;
   final String price;
   final String address;
-  final String user;
-  final String postDate;
   final String currentFuelType;
   final bool isPrimaryColor;
   final void Function() openMap;
@@ -24,8 +22,6 @@ class GasStationInfoCard extends StatefulWidget {
       required this.price,
       required this.isPrimaryColor,
       required this.address,
-      required this.user,
-      required this.postDate,
       required this.currentFuelType,
       required this.openMap})
       : super(key: key);
@@ -121,6 +117,7 @@ class _GasStationInfoCard extends State<GasStationInfoCard> {
                       var date = snapshot.data!['date'];
                       var dateParsed = DateFormat("yyyy-mm-dd").parse(date!);
                       var postDate = dateParsed.toString().split(' ')[0];
+                      var username = snapshot.data!['username'];
 
                       return Card(
                         elevation: 2,
@@ -253,7 +250,8 @@ class _GasStationInfoCard extends State<GasStationInfoCard> {
                                                             const SizedBox(
                                                                 width: 5),
                                                             Text(
-                                                              widget.user,
+                                                              username ??
+                                                                  'Anônimo',
                                                               style: textTheme
                                                                   .bodyText1!
                                                                   .apply(

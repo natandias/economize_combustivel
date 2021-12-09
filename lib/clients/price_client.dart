@@ -68,7 +68,7 @@ class PriceClient {
   Future<Map<String, String>> getLastPrices(
       String gasStation, String fuelType, String city, String state) async {
     double price = 0;
-    String user = '';
+    String username = '';
     Timestamp? date;
 
     await prices
@@ -87,13 +87,14 @@ class PriceClient {
                 price = data["price"];
                 // user = data["user"];
                 date = data["date"] as Timestamp;
+                username = data["username"];
               }),
             })
         .catchError((error) => print("Failed to get last prices: $error"));
 
     return Future(() => {
           "price": price.toStringAsFixed(3),
-          "user": user,
+          "username": username,
           "date": date!.toDate().toString(),
         });
   }
@@ -104,6 +105,7 @@ class PriceClient {
     String state,
     String fuelType,
     double price,
+    String username,
   ) async {
     await prices.doc(uuid.v4()).set({
       'gas_station': gasStation,
@@ -112,6 +114,7 @@ class PriceClient {
       'date': DateTime.now(),
       'city': city,
       'state': state,
+      'username': username,
     }).catchError((error) => print("Failed to register price: $error"));
   }
 }

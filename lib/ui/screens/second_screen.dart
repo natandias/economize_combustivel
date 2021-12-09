@@ -126,8 +126,6 @@ class _SecondScreen extends State<SecondScreen> {
                                                             as String,
                                                     currentFuelType:
                                                         _selectedFuel,
-                                                    user: 'Adriano',
-                                                    postDate: '23/10/2021',
                                                     isPrimaryColor: false,
                                                     openMap: () =>
                                                         openMapWithCoordinates(
