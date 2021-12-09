@@ -32,6 +32,7 @@ class _LoginFormState extends State<LoginForm> {
   bool isPasswordError = false;
   bool isConfirmPasswordError = false;
   bool isEmailError = false;
+  String submitError = "";
 
   @override
   void initState() {
@@ -60,16 +61,26 @@ class _LoginFormState extends State<LoginForm> {
       userClient.createUser(userCredential.user!.uid, nameController.text);
 
       setState(() {
+        submitError = "";
         done = true;
       });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
+        setState(() {
+          submitError = "Senha fraca";
+        });
       } else if (e.code == 'email-already-in-use') {
         print('The account already exists for that email.');
+        setState(() {
+          submitError = "E-mail já cadastrado";
+        });
       }
     } catch (e) {
       print(e);
+      setState(() {
+        submitError = "Erro de rede!";
+      });
     }
   }
 
@@ -80,13 +91,20 @@ class _LoginFormState extends State<LoginForm> {
               email: emailController.text, password: passwordController.text);
 
       setState(() {
+        submitError = "";
         done = true;
       });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         print('No user found for that email.');
+        setState(() {
+          submitError = "Usuário não encontrado";
+        });
       } else if (e.code == 'wrong-password') {
         print('Wrong password provided for that user.');
+        setState(() {
+          submitError = "Senha incorreta";
+        });
       }
     }
   }
@@ -137,6 +155,9 @@ class _LoginFormState extends State<LoginForm> {
               style: TextButton.styleFrom(
                 primary: Colors.white,
                 backgroundColor: Colors.deepOrange,
+                textStyle: const TextStyle(
+                  fontSize: 18,
+                ),
               ),
               child:
                   isCreateAccount ? Text('Criar conta') : Text('Fazer login'),
@@ -156,6 +177,12 @@ class _LoginFormState extends State<LoginForm> {
                         clearText(),
                       }),
             ]),
+            submitError.isNotEmpty
+                ? Text(
+                    submitError,
+                    style: const TextStyle(color: Colors.red, fontSize: 20),
+                  )
+                : const SizedBox.shrink(),
           ],
         ),
       ),

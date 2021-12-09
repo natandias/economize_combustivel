@@ -1,3 +1,4 @@
+import 'package:economize_combustivel/cubit/auth_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:economize_combustivel/ui/widgets/header.dart';
 import 'package:economize_combustivel/ui/widgets/select.dart';
@@ -92,114 +93,143 @@ class _ThirdScreen extends State<ThirdScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<LocationCubit, LocationState>(
         builder: (locationCubitBuilderContext, state) {
-      return Scaffold(
-          body: FutureBuilder<List<dynamic>>(
-              future: gasStationsClient.getGasStations(
-                  state.citySelected, "average_price.diesel", false),
-              builder: (context, snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.none:
-                  case ConnectionState.waiting:
-                    return const Center(
-                        child: Text(
-                      'Carregando dados...',
-                      style: TextStyle(color: Colors.amber, fontSize: 25.0),
-                      textAlign: TextAlign.center,
-                    ));
-                  default:
-                    if (snapshot.hasError) {
-                      return const Center(
-                          child: Text(
-                        'Erro ao carregar dados :(',
-                        style: TextStyle(color: Colors.amber, fontSize: 25.0),
-                        textAlign: TextAlign.center,
-                      ));
-                    } else {
-                      var gasStations = snapshot.data!
-                          .map((gasStation) => gasStation['name'] as String)
-                          .toList();
-                      gasStations.sort();
+      return BlocBuilder<AuthCubit, AuthState>(
+          builder: (authCubitBuilderContext, authState) {
+        if (authState.isLogged) {
+          return Scaffold(
+              body: FutureBuilder<List<dynamic>>(
+                  future: gasStationsClient.getGasStations(
+                      state.citySelected, "average_price.diesel", false),
+                  builder: (context, snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.none:
+                      case ConnectionState.waiting:
+                        return const Center(
+                            child: Text(
+                          'Carregando dados...',
+                          style: TextStyle(color: Colors.amber, fontSize: 25.0),
+                          textAlign: TextAlign.center,
+                        ));
+                      default:
+                        if (snapshot.hasError) {
+                          return const Center(
+                              child: Text(
+                            'Erro ao carregar dados :(',
+                            style:
+                                TextStyle(color: Colors.amber, fontSize: 25.0),
+                            textAlign: TextAlign.center,
+                          ));
+                        } else {
+                          var gasStations = snapshot.data!
+                              .map((gasStation) => gasStation['name'] as String)
+                              .toList();
+                          gasStations.sort();
 
-                      if (errorMsg == 'Cadastrado com sucesso!') {
-                        BlocProvider.of<BottomNavCubit>(context).updateIndex(0);
-                      }
+                          if (errorMsg == 'Cadastrado com sucesso!') {
+                            BlocProvider.of<BottomNavCubit>(context)
+                                .updateIndex(0);
+                          }
 
-                      return Material(
-                        color: Theme.of(context).backgroundColor,
-                        child: ListView(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            physics: const BouncingScrollPhysics(),
-                            children: [
-                              const Header(text: 'Adicione um preço'),
-                              Text(
-                                'Selecione o posto:',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1!
-                                    .apply(fontFamily: 'Poppins'),
-                              ),
-                              Select(
-                                items: gasStations,
-                                selected: _selectedGasStation,
-                                onChanged: changeGasStation,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Selecione o combustível:',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1!
-                                    .apply(fontFamily: 'Poppins'),
-                              ),
-                              Select(
-                                items: const ['Gasolina', 'Etanol', 'Diesel'],
-                                selected: _selectedFuel,
-                                onChanged: changeSelectedFuel,
-                              ),
-                              const SizedBox(height: 8),
-                              TextField(
-                                keyboardType: TextInputType.number,
-                                onChanged: changePrice,
-                                controller: priceController,
-                                decoration: const InputDecoration(
-                                    labelText: 'Preço',
-                                    labelStyle: TextStyle(color: Colors.white),
-                                    enabledBorder: OutlineInputBorder(
-                                      // width: 0.0 produces a thin "hairline" border
-                                      borderSide: BorderSide(
-                                          color: Colors.white, width: 0.0),
+                          return Material(
+                            color: Theme.of(context).backgroundColor,
+                            child: ListView(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                physics: const BouncingScrollPhysics(),
+                                children: [
+                                  const Header(text: 'Adicione um preço'),
+                                  Text(
+                                    'Selecione o posto:',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1!
+                                        .apply(fontFamily: 'Poppins'),
+                                  ),
+                                  Select(
+                                    items: gasStations,
+                                    selected: _selectedGasStation,
+                                    onChanged: changeGasStation,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Selecione o combustível:',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1!
+                                        .apply(fontFamily: 'Poppins'),
+                                  ),
+                                  Select(
+                                    items: const [
+                                      'Gasolina',
+                                      'Etanol',
+                                      'Diesel'
+                                    ],
+                                    selected: _selectedFuel,
+                                    onChanged: changeSelectedFuel,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  TextField(
+                                    keyboardType: TextInputType.number,
+                                    onChanged: changePrice,
+                                    controller: priceController,
+                                    decoration: const InputDecoration(
+                                        labelText: 'Preço',
+                                        labelStyle:
+                                            TextStyle(color: Colors.white),
+                                        enabledBorder: OutlineInputBorder(
+                                          // width: 0.0 produces a thin "hairline" border
+                                          borderSide: BorderSide(
+                                              color: Colors.white, width: 0.0),
+                                        ),
+                                        prefixText: 'R\$',
+                                        prefixStyle: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18.0)),
+                                    style: const TextStyle(
+                                        color: Colors.white, fontSize: 18.0),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        textStyle: const TextStyle(
+                                            fontSize: 18, color: Colors.white)),
+                                    onPressed: () => registerPrice(
+                                        state.citySelected,
+                                        state.stateSelected),
+                                    child: const Text(
+                                      'Cadastrar',
+                                      style: TextStyle(color: Colors.white),
                                     ),
-                                    prefixText: 'R\$',
-                                    prefixStyle: TextStyle(
-                                        color: Colors.white, fontSize: 18.0)),
-                                style: const TextStyle(
-                                    color: Colors.white, fontSize: 18.0),
-                              ),
-                              const SizedBox(height: 8),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    textStyle: const TextStyle(
-                                        fontSize: 18, color: Colors.white)),
-                                onPressed: () => registerPrice(
-                                    state.citySelected, state.stateSelected),
-                                child: const Text(
-                                  'Cadastrar',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                              Text(
-                                errorMsg,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1!
-                                    .apply(fontFamily: 'Poppins'),
-                                textAlign: TextAlign.center,
-                              ),
-                            ]),
-                      );
+                                  ),
+                                  Text(
+                                    errorMsg,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1!
+                                        .apply(fontFamily: 'Poppins'),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ]),
+                          );
+                        }
                     }
-                }
-              }));
+                  }));
+        }
+        return Center(
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Colors.red,
+              textStyle: const TextStyle(fontSize: 18, color: Colors.white),
+            ),
+            onPressed: () =>
+                BlocProvider.of<BottomNavCubit>(context).updateIndex(3),
+            child: const Text(
+              'Faça login para acessar essa tela',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        );
+      });
     });
   }
 }
