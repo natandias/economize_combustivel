@@ -100,7 +100,7 @@ class _ThirdScreen extends State<ThirdScreen> {
           return Scaffold(
               body: FutureBuilder<List<dynamic>>(
                   future: gasStationsClient.getGasStations(
-                      state.citySelected, "average_price.diesel", false),
+                      state.citySelected, state.stateSelected),
                   builder: (context, snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.none:

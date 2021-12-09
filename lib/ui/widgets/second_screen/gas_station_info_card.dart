@@ -85,32 +85,34 @@ class _GasStationInfoCard extends State<GasStationInfoCard> {
                     );
                   default:
                     if (snapshot.hasError) {
-                      return Card(
-                        elevation: 2,
-                        color: widget.isPrimaryColor
-                            ? Theme.of(context).primaryColor
-                            : Theme.of(context).cardColor,
-                        shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(8))),
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Row(children: [
-                            Container(
-                                color: Theme.of(context).primaryColor,
-                                width: 100,
-                                height: 60,
-                                child: const Align(
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    'Erro ao carregar dados :(',
-                                    style: TextStyle(
-                                        color: Colors.amber, fontSize: 25.0),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                )),
-                          ]),
-                        ),
-                      );
+                      print('card gas station err: ${snapshot.error}');
+                      return const SizedBox.shrink();
+                      // return Card(
+                      //   elevation: 2,
+                      //   color: widget.isPrimaryColor
+                      //       ? Theme.of(context).primaryColor
+                      //       : Theme.of(context).cardColor,
+                      //   shape: const RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.all(Radius.circular(8))),
+                      //   child: Padding(
+                      //     padding: const EdgeInsets.all(10.0),
+                      //     child: Row(children: [
+                      //       Container(
+                      //           color: Theme.of(context).primaryColor,
+                      //           width: 100,
+                      //           height: 60,
+                      //           child: const Align(
+                      //             alignment: Alignment.center,
+                      //             child: Text(
+                      //               'Erro ao carregar dados :(',
+                      //               style: TextStyle(
+                      //                   color: Colors.amber, fontSize: 25.0),
+                      //               textAlign: TextAlign.center,
+                      //             ),
+                      //           )),
+                      //     ]),
+                      //   ),
+                      // );
                     } else {
                       print('snapshot.data!!: ${snapshot.data}');
                       var price = snapshot.data!['price'];

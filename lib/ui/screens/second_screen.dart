@@ -54,7 +54,7 @@ class _SecondScreen extends State<SecondScreen> {
       return Scaffold(
           body: FutureBuilder<List<dynamic>>(
               future: gasStationsClient.getGasStations(
-                  state.citySelected, "average_price.diesel", false),
+                  state.citySelected, state.stateSelected),
               builder: (context, snapshot) {
                 switch (snapshot.connectionState) {
                   case ConnectionState.none:
@@ -107,10 +107,10 @@ class _SecondScreen extends State<SecondScreen> {
                                     ),
                                     const SizedBox(height: 8),
                                     Column(
-                                        children: snapshot.data!
+                                            children: snapshot.data!
                                             .map<Widget>((gasStation) =>
                                                 GasStationInfoCard(
-                                                    title: gasStation['name'],
+                                                        title: gasStation['name'],
                                                     price: gasStation[
                                                                 'average_price']
                                                             [_selectedFuel ==
@@ -120,11 +120,11 @@ class _SecondScreen extends State<SecondScreen> {
                                                                         'Etanol'
                                                                     ? 'ethanol'
                                                                     : 'diesel']
-                                                        .toString(),
+                                                            .toString(),
                                                     address:
                                                         gasStation['address']
                                                             as String,
-                                                    currentFuelType:
+                                                        currentFuelType:
                                                         _selectedFuel,
                                                     isPrimaryColor: false,
                                                     openMap: () =>
