@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:economize_combustivel/ui/widgets/header.dart';
 import 'package:economize_combustivel/ui/widgets/first_screen/info_card.dart';
