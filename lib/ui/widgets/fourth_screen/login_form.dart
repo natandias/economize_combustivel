@@ -1,4 +1,5 @@
 import 'package:economize_combustivel/clients/user.dart';
+import 'package:economize_combustivel/cubit/auth_cubit.dart';
 import 'package:economize_combustivel/cubit/bottom_nav_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -113,6 +114,13 @@ class _LoginFormState extends State<LoginForm> {
   Widget build(BuildContext context) {
     if (done) {
       BlocProvider.of<BottomNavCubit>(context).updateIndex(0);
+    }
+    if (BlocProvider.of<AuthCubit>(context).state.isLogged == true) {
+      return const Center(
+          child: Text(
+        "Você já está logado!",
+        style: TextStyle(fontSize: 20),
+      ));
     }
     return Form(
       key: _form,
